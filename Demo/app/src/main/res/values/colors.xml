@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="B">#FF9999</color>
+    <color name="C">#AA5084</color>
+    <color name="red">#CC4025</color>
+    <color name="E">#086</color>
+    <color name="F">#9859</color>
+
+    <color name="bkor">#6200EE</color>
+    <color name="black">#000</color>
+    <color name="white">#FFF</color>
+
+    <color name="toolBar_1">#DD00BCD4</color>
+    <color name="toolBar_2">#3B50A2C9</color>
+    <color name="toolBar_3">#DD00BCD4</color>
+
+</resources>

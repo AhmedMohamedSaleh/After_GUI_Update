@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="hint_username">
+        <item name="android:text">
+            @string/your_username
+        </item>
+        <item name="android:textStyle">
+            bold
+        </item>
+    </style>
+
+    <style name="hint_password">
+        <item name="android:text">
+            @string/your_password
+        </item>
+        <item name="android:textStyle">
+            bold
+        </item>
+    </style>
+
+</resources>
