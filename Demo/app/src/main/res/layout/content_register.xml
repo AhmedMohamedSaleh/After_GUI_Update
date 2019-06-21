@@ -115,12 +115,41 @@
             android:textSize="21.4sp"
             android:textStyle="bold|italic" />
 
+        <EditText
+            android:id="@+id/age"
+            android:layout_width="264dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/confirm_password"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/text_view_values1"
+            android:ems="10"
+            android:hint="your age"
+            android:inputType="text"
+            android:textSize="21.4sp"
+            android:textStyle="bold|italic" />
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="264dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/age"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/text_view_values1"
+            android:ems="10"
+            android:hint="your phone"
+            android:inputType="phone"
+            android:textSize="21.4sp"
+            android:textStyle="bold|italic" />
 
         <Button
-            android:id="@+id/signup_button"
+            android:id="@+id/sign_up"
             android:layout_width="160dp"
             android:layout_height="70dp"
-            android:layout_below="@+id/confirm_password"
+            android:layout_below="@id/phone"
             android:layout_centerInParent="true"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="30dp"

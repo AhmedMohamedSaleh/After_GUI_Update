@@ -389,6 +389,7 @@ public class Upload extends AppCompatActivity {
                             d("response fail" , t.toString() );
                             upload_button.setEnabled(true);
                             imageView.setEnabled(true);
+                            cancel_button.setEnabled(true);
                             Get_Connection_Status.setAPIConnection( !Get_Connection_Status.getAPIConnection() );
                             Validate_Response(null);
                         }

@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import static com.example.android.demo.R.id.Main_layout;
+import static com.example.android.demo.R.id.sign_in;
 
 public class Register extends AppCompatActivity {
 
@@ -46,13 +47,6 @@ public class Register extends AppCompatActivity {
     private EditText email;
     private EditText phone;
 
-    String username_output ;
-    String pass_output ;
-    String firstname_output;
-    String lastname_output ;
-    String age_output ;
-    String email_output ;
-    String phone_output ;
 
     Toolbar toolbar ;
     RelativeLayout Main_layout ;
@@ -60,7 +54,7 @@ public class Register extends AppCompatActivity {
     Handler handler = new Handler();
     private static String response=null;
     Register.AsyncT asyncT = null;
-    private Button sign_in;
+    private Button sign_up;
 
     private static final Pattern username_PATTERN =
             Pattern.compile("^"+
@@ -73,11 +67,11 @@ public class Register extends AppCompatActivity {
 
     private static final Pattern firstname_PATTERN =
             Pattern.compile(
-                    "^[a-zA-Z]{5}$" );
+                    "^[a-zA-Z]{5,}$" );
 
     private static final Pattern lastname_PATTERN =
             Pattern.compile(
-                    "^[a-zA-Z]{5}$" );
+                    "^[a-zA-Z]{5,}$" );
 
     private static final Pattern age_PATTERN =
             Pattern.compile(
@@ -109,7 +103,10 @@ public class Register extends AppCompatActivity {
         first_name = (EditText) findViewById(R.id.first_name);
         last_name = (EditText) findViewById(R.id.last_name);
         email = (EditText) findViewById(R.id.email);
-        sign_in = (Button) findViewById(R.id.sign_in);
+        age = (EditText) findViewById(R.id.age);
+        phone = (EditText) findViewById(R.id.phone);
+
+        sign_up = (Button) findViewById(R.id.sign_up);
         validation = new ArrayList<>();
         for(int i=0;i<6;i++)
             validation.add(false);
@@ -144,7 +141,7 @@ public class Register extends AppCompatActivity {
                 hideKeyboard();
                 if(!validation.contains(false))
                 {
-                    sign_in.setEnabled(true);
+                    sign_up.setEnabled(true);
                 }
                 return false;
             }
@@ -206,7 +203,7 @@ public class Register extends AppCompatActivity {
                     {
                         //Log.d("sdfsdf" , "sdfdsfadadasdasdasdadad");
                         hideKeyboard();
-                        sign_in.setEnabled(true);
+                        sign_up.setEnabled(true);
                     }
                     return true;
                 }
@@ -238,9 +235,10 @@ public class Register extends AppCompatActivity {
 
     private boolean confirm_password(){
         String Input = confirm_password.getText().toString().trim();
-        if (Input.equals(pass_output)){
+        if (Input.equals(password.getText().toString())){
             return true;
         }
+        Toast.makeText(this, "does not match with password field", Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -252,7 +250,6 @@ public class Register extends AppCompatActivity {
         return validate("last name",lastname_PATTERN,last_name);
     }
 
-/*
     private boolean validatephone() {
         return validate("phone",phone_PATTERN,phone);
     }
@@ -260,7 +257,7 @@ public class Register extends AppCompatActivity {
     private boolean validateage() {
         return validate("age",age_PATTERN,age);
     }
-*/
+
     public void confirmInput(View v) {
         Log.d("confirmInput : " , "true");
         if(confirmInputData() )
@@ -268,20 +265,13 @@ public class Register extends AppCompatActivity {
     }
 
     public boolean confirmInputData() {
+
         if (!validateUsername() |  !validatePassword() | !validatefirstname() | !validatelastname()
-                 | !validateEmail() | !confirm_password() ) {
+                 | !validateEmail() | !confirm_password() | !validateage() | !validatephone()) {
             return false ;
         }
-
-        String username_output = "User name: " + username.getText().toString();
-        String pass_output = "Password: " + password.getText().toString();
-        String firstname_output = "First name: " + first_name.getText().toString();
-        String lastname_output = "Last name: " + last_name.getText().toString();
-        String age_output = "Age: " + age.getText().toString();
-        String email_output = "Email: " + email.getText().toString();
-        String phone_output = "Phone: " + phone.getText().toString();
-
-        Toast.makeText(this, username_output, Toast.LENGTH_SHORT).show();
+        sign_up.setEnabled(false);
+        Log.d("confirmInputData : " , "true");
 
         callAsync();
         if (asyncT !=null && asyncT.isCancelled())
@@ -291,9 +281,12 @@ public class Register extends AppCompatActivity {
     }
 
     public void confirm_response() {
+
+        sign_up.setEnabled(true);
         Log.d("Validate_Response : " , "true");
 
-        if (response !=null ){
+        if (response !=null )
+        {
             if (response.equals("Username is exists"))
                 Toast.makeText(this, "Username is exists", Toast.LENGTH_LONG).show();
             else {
@@ -418,13 +411,13 @@ public class Register extends AppCompatActivity {
 
         final JSONObject root = new JSONObject();
         try {
-            root.put("username" , username_output);
-            root.put("password" , pass_output );
-            root.put("first_name" , firstname_output );
-            root.put("last_name" , lastname_output );
-            root.put("age" , age_output);
-            root.put("email" , email_output);
-            root.put("phone" , phone_output );
+            root.put("username" , username.getText().toString());
+            root.put("password" , password.getText().toString() );
+            root.put("first_name" , first_name.getText().toString() );
+            root.put("last_name" , last_name.getText().toString() );
+            root.put("age" , email.getText().toString() );
+            root.put("email" , age.getText().toString() );
+            root.put("phone" , phone.getText().toString() );
             return root;
         } catch (JSONException e) {
             Log.d("JWP","Can not format json");

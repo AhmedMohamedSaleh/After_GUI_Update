@@ -20,23 +20,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
 
         <EditText
             android:id="@+id/api_url"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/text_view_values2"
+            android:ems="10"
             android:hint="Api url"
+            android:inputType="text"
+            android:textSize="22dp"
+            android:textStyle="bold|italic"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
             />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save"
             android:id="@+id/Save"
-            android:background="@drawable/profile_background3"
-            android:layout_marginTop="16dp"
+            android:layout_width="119dp"
+            android:layout_height="62dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/buttons_background"
+            android:textSize="22dp"
+            android:textColor="@color/white"
+            android:text="Save"
             android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
             android:onClick="Save"/>
 
     </LinearLayout>

@@ -67,10 +67,14 @@ public class LoginActivity extends AppCompatActivity {
                     "([a-zA-Z0-9]+)" +      //any letter
                     "*$");
 
-    private GoogleApiClient client;
     AsyncT asyncT = null;
     RelativeLayout Main_layout ;
     Toolbar toolbar;
+
+    // tests variable
+    static String evalue ;
+    static boolean active = false;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -90,9 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         sign_in.setEnabled(false);
 
         Validate_Inputs_And_Enable_Buttons();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public void Validate_Inputs_And_Enable_Buttons() {
@@ -119,7 +120,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
+        username.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                evalue = "username";
+                Log.d("test touch " , String.valueOf(true));
+                return false;
+            }
+        });
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -133,9 +141,26 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     return true;
                 }
+
+                else if(actionId == EditorInfo.IME_ACTION_PREVIOUS){
+                    InputMethodManager imm =(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    Log.d( "test " , String.valueOf(imm.isActive()));
+                    if (validatePassword() && validateUsername()) {
+                        hideKeyboard();
+                        sign_in.setEnabled(true);
+                    }
+                    return true;
+                }
                 return false;
             }
 
+        });
+        password.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                evalue = "password";
+                return false;
+            }
         });
     }
 
@@ -215,7 +240,9 @@ public class LoginActivity extends AppCompatActivity {
         if (response != null) {
             Log.d(" final 2 before check: ", response);
             if (!response.contains("error"))
+            {
                 Log.d("Server response", "response hasn't contain error message");
+            }
             else {
                 String response22[];
                 response22 = ((response.substring(1, response.length() - 2)).split(","));
@@ -244,7 +271,6 @@ public class LoginActivity extends AppCompatActivity {
                     else if (!response.contains("successful"))
                         Log.d("Server response", "response hasn't successful message");
                     String error_message = response22[1].split(":")[1];
-                    String response_user = response22[2].split(":")[1];
                     Log.d("error message", error_message);
                     Toast.makeText(this, (error_message), Toast.LENGTH_LONG).show();
                 }
@@ -394,25 +420,16 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+        active = true;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
+        active = false;
     }
 }
 
