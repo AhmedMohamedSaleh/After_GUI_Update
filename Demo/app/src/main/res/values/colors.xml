@@ -14,8 +14,6 @@
     <color name="black">#000</color>
     <color name="white">#FFF</color>
 
-    <color name="toolBar_1">#DD00BCD4</color>
-    <color name="toolBar_2">#3B50A2C9</color>
-    <color name="toolBar_3">#DD00BCD4</color>
+    <color name="toolBar_2">#00BCD4</color>
 
 </resources>

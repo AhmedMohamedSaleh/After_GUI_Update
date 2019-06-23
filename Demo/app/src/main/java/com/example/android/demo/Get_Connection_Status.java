@@ -4,7 +4,7 @@ package com.example.android.demo;
 
 public class Get_Connection_Status {
 
-    private static String url_api = "https://api-skin-dis.herokuapp.com/" ;
+    private static String url_api = "https://api-skin-dis.herokuapp.com" ;
     private static Boolean APIConnection =true;
     private static Boolean InternetConnection=true;
 

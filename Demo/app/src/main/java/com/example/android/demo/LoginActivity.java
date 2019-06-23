@@ -16,6 +16,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -53,8 +55,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
-    private Button sign_in;
-    private TextView sign_up;
+    public Button sign_in;
+    public TextView sign_up;
     private static String response = null;
     Handler handler = new Handler();
 
@@ -70,6 +72,9 @@ public class LoginActivity extends AppCompatActivity {
     AsyncT asyncT = null;
     RelativeLayout Main_layout ;
     Toolbar toolbar;
+
+    private boolean username_is_Edited=false;
+    private boolean password_is_Edited=false;
 
     // tests variable
     static String evalue ;
@@ -98,25 +103,37 @@ public class LoginActivity extends AppCompatActivity {
 
     public void Validate_Inputs_And_Enable_Buttons() {
 
-        Main_layout.setOnTouchListener(new View.OnTouchListener() {
+        username.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                hideKeyboard();
-                if (validatePassword() && validateUsername()) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                username_is_Edited=true;
+                if (validateUsername() && validatePassword()) {
                     sign_in.setEnabled(true);
+                } else {
+                    sign_in.setEnabled(false);
                 }
-                return false;
             }
         });
-        username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
+
+        password.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-    /* When focus is lost check that the text field
-    * has valid values.
-    */
-                if (!hasFocus) {
-                    validateUsername();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                password_is_Edited=true;
+                if (validateUsername() && validatePassword()) {
+                    sign_in.setEnabled(true);
+                } else {
+                    sign_in.setEnabled(false);
                 }
             }
         });
@@ -128,33 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm =(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    Log.d( "test " , String.valueOf(imm.isActive()));
-                    if (validatePassword() && validateUsername()) {
-                        hideKeyboard();
-                        sign_in.setEnabled(true);
-                    }
-                    return true;
-                }
-
-                else if(actionId == EditorInfo.IME_ACTION_PREVIOUS){
-                    InputMethodManager imm =(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    Log.d( "test " , String.valueOf(imm.isActive()));
-                    if (validatePassword() && validateUsername()) {
-                        hideKeyboard();
-                        sign_in.setEnabled(true);
-                    }
-                    return true;
-                }
-                return false;
-            }
-
-        });
         password.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -164,21 +155,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = this.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(this);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private boolean validateUsername() {
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    public boolean validateUsername(){
         String usernameInput = username.getText().toString().trim();
-
-        if (usernameInput.isEmpty()) {
+        if(!username_is_Edited){
+            return false;
+        }
+        else if (usernameInput.isEmpty()) {
             username.setError("Field can't be empty");
             return false;
         } else if (!username_PATTERN.matcher(usernameInput).matches()) {
@@ -190,14 +173,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validatePassword() {
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    public boolean validatePassword() {
         String passwordInput = password.getText().toString().trim();
-
-        if (passwordInput.isEmpty()) {
+        if(!password_is_Edited){
+            return false;
+        }
+        else if (passwordInput.isEmpty()) {
             password.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(passwordInput).matches()) {
-            password.setError("Password too weak");
+            password.setError("Please enter a valid password");
             return false;
         } else {
             password.setError(null);
@@ -210,14 +196,10 @@ public class LoginActivity extends AppCompatActivity {
         sign_in.setEnabled(false);
         sign_up.setEnabled(false);
 
-       /* getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-         */
         Log.d("confirmInput : ", "true");
 
         if (confirmInputData()) {
             confirm_response();
-            //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 
         sign_in.setEnabled(true);

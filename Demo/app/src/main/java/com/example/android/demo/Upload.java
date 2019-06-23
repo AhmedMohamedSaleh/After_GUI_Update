@@ -58,7 +58,7 @@ public class Upload extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMAGE = 1;
     ImageView imageView;
-    private Button upload_button,select_button,cancel_button= null;
+    public Button upload_button,select_button,cancel_button= null;
     EditText editText;
     TextView result;
     Call_Api_And_Get_Response callApigetResponse = null;
@@ -68,6 +68,9 @@ public class Upload extends AppCompatActivity {
     Upload_Image_Request_Config uploadImageAPIConfig;
     ProgressBar progressBar;
     Toolbar toolbar;
+
+    static String evalue ;
+    static boolean active = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,6 @@ public class Upload extends AppCompatActivity {
         progressBar.setEnabled(false);
         progressBar.setVisibility( INVISIBLE);
 
-
     }
 
     public void select_image(View v) {
@@ -100,8 +102,6 @@ public class Upload extends AppCompatActivity {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -123,7 +123,6 @@ public class Upload extends AppCompatActivity {
             Bitmap circleBitmap = null;
             try {
                 bitmap2 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-
 
                 Bitmap bitmap = Bitmap.createScaledBitmap(bitmap2, 100, 100, true);
 
@@ -234,7 +233,7 @@ public class Upload extends AppCompatActivity {
                     //Toast.makeText(this, ( response_class + ( response_accuracy) ) , Toast.LENGTH_LONG).show();
                     result.setVisibility(VISIBLE);
                     String response_accuracy_output ;
-                    DecimalFormat df = new DecimalFormat("##.###");
+                    DecimalFormat df = new DecimalFormat("##.#");
                     response_accuracy = response_accuracy.substring(1,response_accuracy.length()-1);
                     response_class = response_class.substring(1,response_class.length()-1);
                     response_accuracy_output = df.format(Double.valueOf( response_accuracy ) ) + " % .";
@@ -399,5 +398,17 @@ public class Upload extends AppCompatActivity {
             }
             return "";
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
     }
 }

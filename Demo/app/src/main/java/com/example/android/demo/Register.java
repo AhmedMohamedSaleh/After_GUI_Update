@@ -3,10 +3,14 @@ package com.example.android.demo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -33,9 +37,6 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import static com.example.android.demo.R.id.Main_layout;
-import static com.example.android.demo.R.id.sign_in;
-
 public class Register extends AppCompatActivity {
 
     private EditText username;
@@ -47,46 +48,37 @@ public class Register extends AppCompatActivity {
     private EditText email;
     private EditText phone;
 
+    private boolean first_name_is_Edited = false;
+    private boolean last_name_is_Edited = false;
+    private boolean username_is_Edited = false;
+    private boolean email_is_Edited = false;
+    private boolean confirm_password_is_Edited = false;
+    private boolean password_is_Edited = false;
+    private boolean age_is_Edited = false;
+    private boolean phone_is_Edited = false;
 
-    Toolbar toolbar ;
-    RelativeLayout Main_layout ;
+
+    Toolbar toolbar;
+    RelativeLayout Main_layout;
     ArrayList<Boolean> validation;
     Handler handler = new Handler();
-    private static String response=null;
+    private static String response = null;
     Register.AsyncT asyncT = null;
     private Button sign_up;
 
-    private static final Pattern username_PATTERN =
-            Pattern.compile("^"+
-                    "[A-Za-z0-9]+(?:[ _][A-Za-z0-9]+)*$" );
+    private static final Pattern username_PATTERN = Pattern.compile("^" + "[A-Za-z0-9]+(?:[ _][A-Za-z0-9]+)*$");
 
-    private static final Pattern PASSWORD_PATTERN =
-            Pattern.compile("^" +
-                    "([a-zA-Z0-9]+)" +      //any letter
-                    "$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^" + "([a-zA-Z0-9]+)" + "$");
 
-    private static final Pattern firstname_PATTERN =
-            Pattern.compile(
-                    "^[a-zA-Z]{5,}$" );
+    private static final Pattern firstname_PATTERN = Pattern.compile("^[a-zA-Z]{5,}$");
 
-    private static final Pattern lastname_PATTERN =
-            Pattern.compile(
-                    "^[a-zA-Z]{5,}$" );
+    private static final Pattern lastname_PATTERN = Pattern.compile("^[a-zA-Z]{5,}$");
 
-    private static final Pattern age_PATTERN =
-            Pattern.compile(
-                    "^([1-9][0-9])$"
-                     );
+    private static final Pattern age_PATTERN = Pattern.compile("^([1-9][0-9])$");
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile(
-                    "[a-zA-Z_0-9]+@gmail.com|[a-zA-Z_0-9]+@yahoo.com"
-            );
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z_0-9]+@+[a-zA-Z]+.+[a-zA-Z]");
 
-    private static final Pattern phone_PATTERN =
-            Pattern.compile(
-                    "^011[0-9]{8}$"
-                    );
+    private static final Pattern phone_PATTERN = Pattern.compile("^011[0-9]{8}$");
 
 
     @Override
@@ -108,20 +100,17 @@ public class Register extends AppCompatActivity {
 
         sign_up = (Button) findViewById(R.id.sign_up);
         validation = new ArrayList<>();
-        for(int i=0;i<6;i++)
+        for (int i = 0; i < 6; i++)
             validation.add(false);
-        /*
-        age = (EditText) findViewById(R.id.age);
-        phone = (EditText) findViewById(R.id.phone);
-         */
         Validation();
 
     }
 
-    private boolean validate(final String validation_string , Pattern pattern , final EditText editText){
+    private boolean validate(boolean text_is_edited, final String validation_string, Pattern pattern, final EditText editText) {
         String Input = editText.getText().toString().trim();
-
-        if (Input.isEmpty()) {
+        if (!text_is_edited) {
+            return false;
+        } else if (Input.isEmpty()) {
             editText.setError("Field can't be empty");
             return false;
         } else if (!pattern.matcher(Input).matches()) {
@@ -133,165 +122,268 @@ public class Register extends AppCompatActivity {
         }
     }
 
+    private boolean validate_All_Texts() {
+
+        if (!validatefirstname()) {
+            return false;
+        }
+        if (!validatelastname()) {
+            return false;
+        }
+        if (!validateUsername()) {
+            return false;
+        }
+        if (!validateEmail()) {
+            return false;
+        }
+        if (!validatePassword()) {
+            return false;
+        }
+        if (!validateConfirm_password()) {
+            return false;
+        }
+        if (!validateage()) {
+            return false;
+        }
+        if (!validatephone()) {
+            return false;
+        }
+        return true;
+    }
+
     public void Validation() {
 
-        Main_layout.setOnTouchListener(new View.OnTouchListener() {
+        first_name.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                hideKeyboard();
-                if(!validation.contains(false))
-                {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                first_name_is_Edited = true;
+                if (validate_All_Texts()) {
                     sign_up.setEnabled(true);
-                }
-                return false;
-            }
-        });
-
-        username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validation.set(0,validateUsername());
+                } else {
+                    sign_up.setEnabled(false);
                 }
             }
         });
-        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        last_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validation.set(1,validateEmail());
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                last_name_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
                 }
             }
         });
-        first_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validation.set(2,validatefirstname());
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                username_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
                 }
             }
         });
-        last_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validation.set(3,validatelastname());
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                email_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
                 }
             }
         });
-        password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validation.set(4,validatePassword());
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                password_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
                 }
             }
         });
-        confirm_password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        confirm_password.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    validation.set(5,confirm_password());
-                   // Log.d("sdfsdf" , String.valueOf(validation.size()));
-                    if(!validation.contains(false))
-                    {
-                        //Log.d("sdfsdf" , "sdfdsfadadasdasdasdadad");
-                        hideKeyboard();
-                        sign_up.setEnabled(true);
-                    }
-                    return true;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                confirm_password_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
                 }
-                return false;
+            }
+        });
+        age.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                age_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
+                }
+            }
+        });
+        phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+            public void afterTextChanged(Editable s) {
+                phone_is_Edited = true;
+                if (validate_All_Texts()) {
+                    sign_up.setEnabled(true);
+                } else {
+                    sign_up.setEnabled(false);
+                }
             }
         });
     }
-
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = this.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(this);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private boolean validateUsername() {
+        return validate(username_is_Edited, "user name", username_PATTERN, username);
     }
-
-    private boolean validateUsername() { return validate("user name",username_PATTERN,username); }
 
     private boolean validateEmail() {
-        return validate("email",EMAIL_PATTERN,email);
+        return validate(email_is_Edited, "email", EMAIL_PATTERN, email);
     }
 
     private boolean validatePassword() {
-        return validate("password",PASSWORD_PATTERN,password);
+        return validate(password_is_Edited, "password", PASSWORD_PATTERN, password);
     }
 
-    private boolean confirm_password(){
+    private boolean validateConfirm_password() {
         String Input = confirm_password.getText().toString().trim();
-        if (Input.equals(password.getText().toString())){
-            return true;
+
+        if (validate(confirm_password_is_Edited, "confirm password", PASSWORD_PATTERN, confirm_password)) {
+            if (Input.equals(password.getText().toString())) {
+                return true;
+            } else {
+                confirm_password.setError("Password and confirm password doesn't match");
+                return false;
+            }
+        } else {
+            return false;
         }
-        Toast.makeText(this, "does not match with password field", Toast.LENGTH_LONG).show();
-        return false;
+
+
     }
 
     private boolean validatefirstname() {
-        return validate("first name",firstname_PATTERN,first_name);
+        return validate(first_name_is_Edited, "first name", firstname_PATTERN, first_name);
     }
 
     private boolean validatelastname() {
-        return validate("last name",lastname_PATTERN,last_name);
+        return validate(last_name_is_Edited, "last name", lastname_PATTERN, last_name);
     }
 
     private boolean validatephone() {
-        return validate("phone",phone_PATTERN,phone);
+        return validate(phone_is_Edited, "phone", phone_PATTERN, phone);
     }
 
     private boolean validateage() {
-        return validate("age",age_PATTERN,age);
+        return validate(age_is_Edited, "age", age_PATTERN, age);
     }
 
     public void confirmInput(View v) {
-        Log.d("confirmInput : " , "true");
-        if(confirmInputData() )
+        Log.d("confirmInput : ", "true");
+        if (confirmInputData())
             confirm_response();
     }
 
     public boolean confirmInputData() {
 
-        if (!validateUsername() |  !validatePassword() | !validatefirstname() | !validatelastname()
-                 | !validateEmail() | !confirm_password() | !validateage() | !validatephone()) {
-            return false ;
+        if (!validateUsername() | !validatePassword() | !validatefirstname() | !validatelastname()
+                | !validateEmail() | !validateConfirm_password() | !validateage() | !validatephone()) {
+            return false;
         }
         sign_up.setEnabled(false);
-        Log.d("confirmInputData : " , "true");
+        Log.d("confirmInputData : ", "true");
 
         callAsync();
-        if (asyncT !=null && asyncT.isCancelled())
-            Log.d("thread " , "cancel final" );
-        Log.d("confirmInputData : " , "true");
-        return true ;
+        if (asyncT != null && asyncT.isCancelled())
+            Log.d("thread ", "cancel final");
+        Log.d("confirmInputData : ", "true");
+        return true;
     }
 
     public void confirm_response() {
 
         sign_up.setEnabled(true);
-        Log.d("Validate_Response : " , "true");
+        Log.d("Validate_Response : ", "true");
 
-        if (response !=null )
-        {
-            if (response.equals("Username is exists"))
+        if (response != null) {
+            if (response.contains("Username already exist"))
                 Toast.makeText(this, "Username is exists", Toast.LENGTH_LONG).show();
             else {
                 try {
-                    
+
                     Log.d(" final 2 : ", response);
                     String response22[];
                     response22 = ((response.substring(1, response.length() - 2)).split(","));
@@ -316,19 +408,17 @@ public class Register extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("response error " , "invalid structure .");
-                    }
+                    Log.d("response error ", "invalid structure .");
+                }
             }
-        }
-        else{
+        } else {
             if (Get_Connection_Status.getAPIConnection()) {
                 Log.d("Server :", "didn't recieve response .");
-                Toast.makeText(this, ( "Server :- didn't recieve response ." ) , Toast.LENGTH_LONG).show();
-            }
-            else{
-                Log.d("Connection " , "didn't establish ,please check your connection .");
-                Toast.makeText(this, ( "Connection didn't establish \nplease check your connection ." ) , Toast.LENGTH_LONG).show();
-                Get_Connection_Status.setAPIConnection( !Get_Connection_Status.getAPIConnection() );
+                Toast.makeText(this, ("Server :- didn't recieve response ."), Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("Connection ", "didn't establish ,please check your connection .");
+                Toast.makeText(this, ("Connection didn't establish \nplease check your connection ."), Toast.LENGTH_LONG).show();
+                Get_Connection_Status.setAPIConnection(!Get_Connection_Status.getAPIConnection());
             }
         }
 
@@ -339,30 +429,30 @@ public class Register extends AppCompatActivity {
 
         asyncT = new AsyncT();
         try {
-            response=asyncT.execute().get();
+            response = asyncT.execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
         asyncT.cancel(true);
-        Log.d("callAsync " , "true" );
+        Log.d("callAsync ", "true");
     }
 
-    class AsyncT extends AsyncTask<Void,Void,String> {
+    class AsyncT extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d("thread " , "begin");
+            Log.d("thread ", "begin");
         }
 
         @Override
         protected String doInBackground(Void... params) {
 
-            String data=null;
+            String data = null;
             try {
-                URL url = new URL(Get_Connection_Status.getUrl_api()+"api/createaccount"); //Enter URL here
+                URL url = new URL(Get_Connection_Status.getUrl_api() + "api/createaccount"); //Enter URL here
 
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setDoOutput(true);
@@ -373,25 +463,25 @@ public class Register extends AppCompatActivity {
                 httpURLConnection.setConnectTimeout(4000);
                 httpURLConnection.connect();
 
-                JSONObject jsonObject= formatInputAsJson();
+                JSONObject jsonObject = formatInputAsJson();
 
                 OutputStream os = httpURLConnection.getOutputStream();
                 os.write(jsonObject.toString().getBytes("UTF-8"));
                 os.close();
 
-                Log.d("thread " , "back");
+                Log.d("thread ", "back");
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
                 int HttpResult = httpURLConnection.getResponseCode();
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
-                    BufferedReader br = new BufferedReader(
+                    BufferedReader bufferedReader = new BufferedReader(
                             new InputStreamReader(httpURLConnection.getInputStream(), "utf-8"));
                     String line = null;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line + "\n");
                     }
-                    br.close();
-                    data = sb.toString();
+                    bufferedReader.close();
+                    data = stringBuilder.toString();
                 } else {
                     System.out.println(httpURLConnection.getResponseMessage());
                 }
@@ -399,7 +489,7 @@ public class Register extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                Get_Connection_Status.setAPIConnection( !Get_Connection_Status.getAPIConnection() );
+                Get_Connection_Status.setAPIConnection(!Get_Connection_Status.getAPIConnection());
             }
             return data;
         }
@@ -407,20 +497,29 @@ public class Register extends AppCompatActivity {
 
     }
 
-    private JSONObject formatInputAsJson(){
+    private JSONObject formatInputAsJson() {
 
         final JSONObject root = new JSONObject();
         try {
-            root.put("username" , username.getText().toString());
-            root.put("password" , password.getText().toString() );
-            root.put("first_name" , first_name.getText().toString() );
-            root.put("last_name" , last_name.getText().toString() );
-            root.put("age" , email.getText().toString() );
-            root.put("email" , age.getText().toString() );
-            root.put("phone" , phone.getText().toString() );
+            String username_output = username.getText().toString();
+            String pass_output = password.getText().toString();
+            String firstname_output = first_name.getText().toString();
+            String lastname_output = last_name.getText().toString();
+            String email_output = email.getText().toString();
+            String age_output = age.getText().toString();
+            String phone_output = phone.getText().toString();
+
+            root.put("username", username_output);
+            root.put("password", pass_output);
+            root.put("first_name", firstname_output);
+            root.put("last_name", lastname_output);
+            root.put("age", age_output);
+            root.put("email", email_output);
+            root.put("phone", phone_output);
             return root;
+
         } catch (JSONException e) {
-            Log.d("JWP","Can not format json");
+            Log.d("JWP", "Can not format json");
         }
         return null;
     }

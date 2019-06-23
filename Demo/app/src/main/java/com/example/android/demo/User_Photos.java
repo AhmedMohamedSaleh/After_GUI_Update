@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -58,6 +59,9 @@ public class User_Photos extends AppCompatActivity {
     String response_from_Asynct;
     int id = 75465;
     ArrayList<String> urls = new ArrayList<>();
+    Toolbar toolbar;
+    static String evalue ;
+    static boolean active = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +71,8 @@ public class User_Photos extends AppCompatActivity {
         info = Establish_API_Connection.getUser_infos();
         textView_1 = (TextView) findViewById(R.id.TV_1);
         textView_1.setVisibility(View.GONE);
-        /*progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-        progressBar.setEnabled(false);
-        progressBar.setVisibility( INVISIBLE);
-        */
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
         show();
     }
 
@@ -311,26 +313,29 @@ public class User_Photos extends AppCompatActivity {
         linearLayout.addView(linearLayout1);
 
         final de.hdodenhof.circleimageview.CircleImageView imageView1 = new de.hdodenhof.circleimageview.CircleImageView(this);
-        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(280, 280);
-//        imageView1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AlertDialog.Builder mBuilder = new AlertDialog.Builder(User_Photos.this);
-//                View mView = getLayoutInflater().inflate(R.layout.userphoto, null);
-//                PhotoView photoView = (PhotoView) mView.findViewById(R.id.imageView);
-//                photoView.setImageDrawable(imageView1.getDrawable());
-//                mBuilder.setView(mView);
-//                AlertDialog mDialog = mBuilder.create();
-//                mDialog.show();
-//            }
-//        });
-
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(280, 280,1f);
         params1.setMargins(30, 30, 0, 30);
-        params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        //  params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 
         imageView1.setLayoutParams(params1);
         //imageView1.setImageResource(R.drawable.salh);
         Picasso.with(this).load(Url).centerCrop().resize(50,50).into(imageView1);
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(User_Photos.this);
+                View mView = getLayoutInflater().inflate(R.layout.activity_dialog_custom, null);
+                PhotoView photoView = (PhotoView) mView.findViewById(R.id.imageView);
+                photoView.setImageDrawable(imageView1.getDrawable());
+                //  photoView.setMaxHeight(330);
+                photoView.setMinimumHeight(3000);
+
+                mBuilder.setView(mView);
+                AlertDialog mDialog = mBuilder.create();
+                mDialog.show();
+            }
+        });
+
         linearLayout1.addView(imageView1);
 
         RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -354,7 +359,6 @@ public class User_Photos extends AppCompatActivity {
         text2.setTypeface(null, Typeface.BOLD);
         params4.addRule(RelativeLayout.BELOW, text1.getId());
         text2.setLayoutParams(params4);
-
         linearLayout1.addView(text2);
     }
 
@@ -481,4 +485,15 @@ public class User_Photos extends AppCompatActivity {
 
     }
     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 }

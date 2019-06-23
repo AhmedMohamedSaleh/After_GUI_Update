@@ -13,6 +13,10 @@ public class Profile extends AppCompatActivity {
     Button signout_button, upload_button,view_images_button;
     TextView username;
     Toolbar toolbar;
+
+    static String evalue ;
+    static boolean active = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
@@ -52,6 +56,7 @@ public class Profile extends AppCompatActivity {
     private void launchLoginActivity() {
 
         Intent intent = new Intent(this, LoginActivity.class);
+        finish();  //Kill the activity from which you will go to next activity
         startActivity(intent);
     }
     private void launchUserImagesActivity() {
@@ -59,4 +64,18 @@ public class Profile extends AppCompatActivity {
         Intent intent = new Intent(this, User_Photos.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
+
+
 }

@@ -21,6 +21,7 @@ public class Local_API_Configration extends AppCompatActivity {
     Toolbar toolbar;
     static String evalue ;
     static boolean active = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,21 +34,29 @@ public class Local_API_Configration extends AppCompatActivity {
     }
 
     public void Save(View v) {
+
         String url =api_url.getText().toString().trim();
 
         if (!url.isEmpty()){
             if(!url.contains("https://"))
-                url = "http://" + url + ":5000/";
+                url = "http://" + url + ":5000";
+            Log.d("url ", url );
             boolean check = Patterns.WEB_URL.matcher(url).matches();
-            if (!check)
+            if (!check )
             {
                 Toast.makeText(this, ( "Invalid Url " ) , Toast.LENGTH_LONG).show();
                 Log.d("url validation", String.valueOf(check) );
                 return;
             }else
+            {
+                Get_Connection_Status.setUrl_api(Get_Connection_Status.getUrl_api()+"/");
                 Get_Connection_Status.setUrl_api(url);
-        }
+            }
 
+        }
+        Get_Connection_Status.setUrl_api(Get_Connection_Status.getUrl_api()+"/");
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
 
     }
 

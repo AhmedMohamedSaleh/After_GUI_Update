@@ -15,6 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="100dp"
+        android:textStyle="bold"
+        android:textSize="40dp"
         android:id="@+id/TV_1"
         />
 </LinearLayout>
